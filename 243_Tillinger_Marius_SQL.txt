@@ -1,0 +1,492 @@
+CREATE TABLE Resorts (
+  id_resort INT NOT NULL,
+  name VARCHAR2(255) NOT NULL,
+  location VARCHAR2(255) NOT NULL,
+  constraint RESORTS_PK PRIMARY KEY (id_resort));
+
+CREATE sequence RESORTS_ID_RESORT_SEQ;
+
+CREATE trigger BI_RESORTS_ID_RESORT
+ before insert on Resorts
+ for each row
+begin
+ select RESORTS_ID_RESORT_SEQ.nextval into :NEW.id_resort from dual;
+end;
+
+/
+CREATE TABLE Staff (
+  id_staff INT NOT NULL,
+  resort_id INT NOT NULL,
+  first_name VARCHAR2(255) NOT NULL,
+  last_name VARCHAR2(255) NOT NULL,
+  role VARCHAR2(255) NOT NULL,
+  constraint STAFF_PK PRIMARY KEY (id_staff));
+
+CREATE sequence STAFF_ID_STAFF_SEQ;
+
+CREATE trigger BI_STAFF_ID_STAFF
+ before insert on Staff
+ for each row
+begin
+ select STAFF_ID_STAFF_SEQ.nextval into :NEW.id_staff from dual;
+end;
+
+/
+CREATE TABLE RoomTypes (
+  id_rtype INT NOT NULL,
+  description VARCHAR2(255) NOT NULL,
+  amount INT NOT NULL,
+  price INT NOT NULL,
+  constraint ROOMTYPES_PK PRIMARY KEY (id_rtype));
+
+CREATE sequence ROOMTYPES_ID_RTYPE_SEQ;
+
+CREATE trigger BI_ROOMTYPES_ID_RTYPE
+ before insert on RoomTypes
+ for each row
+begin
+ select ROOMTYPES_ID_RTYPE_SEQ.nextval into :NEW.id_rtype from dual;
+end;
+
+/
+CREATE TABLE Rooms (
+  id_room INT NOT NULL,
+  resort_id INT NOT NULL,
+  rtype_id INT NOT NULL,
+  constraint ROOMS_PK PRIMARY KEY (id_room));
+
+CREATE sequence ROOMS_ID_ROOM_SEQ;
+
+CREATE trigger BI_ROOMS_ID_ROOM
+ before insert on Rooms
+ for each row
+begin
+ select ROOMS_ID_ROOM_SEQ.nextval into :NEW.id_room from dual;
+end;
+
+/
+CREATE TABLE Clients (
+  id_client INT NOT NULL,
+  first_name VARCHAR2(255) NOT NULL,
+  last_name VARCHAR2(255) NOT NULL,
+  date_of_birth DATE,
+  constraint CLIENTS_PK PRIMARY KEY (id_client));
+
+CREATE sequence CLIENTS_ID_CLIENT_SEQ;
+
+CREATE trigger BI_CLIENTS_ID_CLIENT
+ before insert on Clients
+ for each row
+begin
+ select CLIENTS_ID_CLIENT_SEQ.nextval into :NEW.id_client from dual;
+end;
+
+/
+CREATE TABLE Reservations (
+  id_reservation INT NOT NULL,
+  client_id INT NOT NULL,
+  constraint RESERVATIONS_PK PRIMARY KEY (id_reservation));
+
+CREATE sequence RESERVATIONS_ID_RESERVATION_SEQ;
+
+CREATE trigger BI_RESERVATIONS_ID_RESERVATION
+ before insert on Reservations
+ for each row
+begin
+ select RESERVATIONS_ID_RESERVATION_SEQ.nextval into :NEW.id_reservation from dual;
+end;
+
+/
+CREATE TABLE Bills (
+  id_invoice INT NOT NULL,
+  reservation_id INT NOT NULL,
+  constraint BILLS_PK PRIMARY KEY (id_invoice));
+
+CREATE sequence BILLS_ID_INVOICE_SEQ;
+
+CREATE trigger BI_BILLS_ID_INVOICE
+ before insert on Bills
+ for each row
+begin
+ select BILLS_ID_INVOICE_SEQ.nextval into :NEW.id_invoice from dual;
+end;
+
+/
+CREATE TABLE ReservedRoom (
+  id_reservedroom INT NOT NULL,
+  room_id INT NOT NULL,
+  reservation_id INT NOT NULL,
+  check_in DATE NOT NULL,
+  check_out DATE NOT NULL,
+  constraint RESERVEDROOM_PK PRIMARY KEY (id_reservedroom));
+
+CREATE sequence RESERVEDROOM_ID_RESERVEDROOM_SEQ;
+
+CREATE trigger BI_RESERVEDROOM_ID_RESERVEDROOM
+ before insert on ReservedRoom
+ for each row
+begin
+ select RESERVEDROOM_ID_RESERVEDROOM_SEQ.nextval into :NEW.id_reservedroom from dual;
+end;
+
+/
+
+ALTER TABLE Staff ADD CONSTRAINT Staff_fk0 FOREIGN KEY (resort_id) REFERENCES Resorts(id_resort);
+
+
+ALTER TABLE Rooms ADD CONSTRAINT Rooms_fk0 FOREIGN KEY (resort_id) REFERENCES Resorts(id_resort);
+ALTER TABLE Rooms ADD CONSTRAINT Rooms_fk1 FOREIGN KEY (rtype_id) REFERENCES RoomTypes(id_rtype);
+
+
+ALTER TABLE Reservations ADD CONSTRAINT Reservations_fk0 FOREIGN KEY (client_id) REFERENCES Clients(id_client);
+
+ALTER TABLE Bills ADD CONSTRAINT Bills_fk0 FOREIGN KEY (reservation_id) REFERENCES Reservations(id_reservation);
+
+ALTER TABLE ReservedRoom ADD CONSTRAINT ReservedRoom_fk0 FOREIGN KEY (room_id) REFERENCES Rooms(id_room);
+ALTER TABLE ReservedRoom ADD CONSTRAINT ReservedRoom_fk1 FOREIGN KEY (reservation_id) REFERENCES Reservations(id_reservation);
+
+
+insert into Resorts (id_resort, name, location)
+values (1, 'Grand Hotel București', 'Bulevardul Nicolae Bălcescu 4, București 010051')/
+insert into Resorts (id_resort, name, location)
+values (2, 'Hotel Trianon', 'Strada Grigore Cobălcescu 9, București 010191')/
+insert into Resorts (id_resort, name, location)
+values (3, 'Bucharest Downtown Inn', 'Calea Griviței 91, București 010705')/
+insert into Resorts (id_resort, name, location)
+values (4, 'Grand Pier Boutique Villa', 'Calea Șerban Vodă nr 22-24, sector 4, București 040201')/
+insert into Resorts (id_resort, name, location)
+values (5, 'Happy Accomodation', 'Strada Mihai Eminescu 72, București 020081')/
+
+
+insert into Staff (id_staff, resort_id, first_name, last_name, role)
+values (1,1,'Eduardo','Dragomir', 'receptioner')/
+insert into Staff (id_staff, resort_id, first_name, last_name, role)
+values (2,1,'Eric','Morosan', 'bodyguard')/
+insert into Staff (id_staff, resort_id, first_name, last_name, role)
+values (3,2,'Cosmina','Duca', 'receptioner')/
+insert into Staff (id_staff, resort_id, first_name, last_name, role)
+values (4,1,'Marius','Tillinger', 'chef')/
+insert into Staff (id_staff, resort_id, first_name, last_name, role)
+values (5,1,'Liviu','Bouruc', 'bodyguard')/
+insert into Staff (id_staff, resort_id, first_name, last_name, role)
+values (6,4,'Adrian','Leventiu', 'chef')/
+insert into Staff (id_staff, resort_id, first_name, last_name, role)
+values (7,3,'David','Bejenariu', 'bodyguard')/
+insert into Staff (id_staff, resort_id, first_name, last_name, role)
+values (8,5,'David','Patranjel', 'receptioner')/
+insert into Staff (id_staff, resort_id, first_name, last_name, role)
+values (9,2,'Diana','Muscalu', 'manager')/
+
+
+insert into RoomTypes (id_rtype, description, amount, price)
+VALUES  (1, 'penthouse', 10, 2000)/
+insert into RoomTypes (id_rtype, description, amount, price)
+VALUES  (2, 'apartament cu balcon', 10, 1500)/
+insert into RoomTypes (id_rtype, description, amount, price)
+VALUES  (3, 'apartament fara balcon', 10, 1000)/
+insert into RoomTypes (id_rtype, description, amount, price)
+VALUES  (4, 'camera single double bed', 10, 500)/
+insert into RoomTypes (id_rtype, description, amount, price)
+VALUES  (5, 'camera single one-person bed', 10, 100)/
+
+
+insert into Rooms (id_room, resort_id, rtype_id)
+VALUES (1,1,1)/
+insert into Rooms (id_room, resort_id, rtype_id)
+VALUES (2,2,1)/
+insert into Rooms (id_room, resort_id, rtype_id)
+VALUES (3,3,1)/
+insert into Rooms (id_room, resort_id, rtype_id)
+VALUES (4,4,1)/
+insert into Rooms (id_room, resort_id, rtype_id)
+VALUES (5,5,1)/
+insert into Rooms (id_room, resort_id, rtype_id)
+VALUES (6,1,2)/
+insert into Rooms (id_room, resort_id, rtype_id)
+VALUES (7,2,2)/
+insert into Rooms (id_room, resort_id, rtype_id)
+VALUES (8,3,2)/
+insert into Rooms (id_room, resort_id, rtype_id)
+VALUES (9,4,2)/
+insert into Rooms (id_room, resort_id, rtype_id)
+VALUES (10,5,2)/
+insert into Rooms (id_room, resort_id, rtype_id)
+VALUES (11,1,3)/
+insert into Rooms (id_room, resort_id, rtype_id)
+VALUES (12,2,3)/
+insert into Rooms (id_room, resort_id, rtype_id)
+VALUES (13,3,3)/
+insert into Rooms (id_room, resort_id, rtype_id)
+VALUES (14,4,3)/
+insert into Rooms (id_room, resort_id, rtype_id)
+VALUES (15,5,3)/
+insert into Rooms (id_room, resort_id, rtype_id)
+VALUES (16,1,4)/
+insert into Rooms (id_room, resort_id, rtype_id)
+VALUES (17,2,4)/
+insert into Rooms (id_room, resort_id, rtype_id)
+VALUES (18,3,4)/
+insert into Rooms (id_room, resort_id, rtype_id)
+VALUES (19,4,4)/
+insert into Rooms (id_room, resort_id, rtype_id)
+VALUES (20,5,4)/
+
+
+insert into Clients (id_client, first_name, last_name, date_of_birth)
+VALUES (1,'Marius','Dumitran',null)/
+insert into Clients (id_client, first_name, last_name, date_of_birth)
+VALUES (2,'Alexandru','Mihail',null)/
+insert into Clients (id_client, first_name, last_name, date_of_birth)
+VALUES (3,'Stefan','Popescu','10-10-1980')/
+insert into Clients (id_client, first_name, last_name, date_of_birth)
+VALUES (4,'Andrei','Paun','11-12-1990')/
+insert into Clients (id_client, first_name, last_name, date_of_birth)
+VALUES (5,'Cristian','Rusu',null)/
+
+
+insert into Reservations (id_reservation, client_id)
+VALUES (1,1)/
+insert into Reservations (id_reservation, client_id)
+VALUES (2,2)/
+insert into Reservations (id_reservation, client_id)
+VALUES (3,3)/
+insert into Reservations (id_reservation, client_id)
+VALUES (4,4)/
+insert into Reservations (id_reservation, client_id)
+VALUES (5,5)/
+insert into Reservations (id_reservation, client_id)
+VALUES (6,1)/
+insert into Reservations (id_reservation, client_id)
+VALUES (7,2)/
+insert into Reservations (id_reservation, client_id)
+VALUES (8,3)/
+insert into Reservations (id_reservation, client_id)
+VALUES (9,4)/
+insert into Reservations (id_reservation, client_id)
+VALUES (10,5)/
+insert into Reservations (id_reservation, client_id)
+VALUES (11,1)/
+insert into Reservations (id_reservation, client_id)
+VALUES (12,3)/
+
+
+
+insert into Bills (id_invoice, reservation_id)
+values (1,1);
+insert into Bills (id_invoice, reservation_id)
+values (2,2);
+insert into Bills (id_invoice, reservation_id)
+values (3,3);
+insert into Bills (id_invoice, reservation_id)
+values (4,4);
+insert into Bills (id_invoice, reservation_id)
+values (5,5);
+
+
+insert into ReservedRoom (id_reservedroom, room_id, reservation_id, check_in, check_out)
+values (1,12,1,'01-06-2022','09-06-2022');
+insert into ReservedRoom (id_reservedroom, room_id, reservation_id, check_in, check_out)
+values (2,15,2,'01-07-2022','09-07-2022');
+insert into ReservedRoom (id_reservedroom, room_id, reservation_id, check_in, check_out)
+values (3,3,3,'01-08-2022','09-08-2022');
+insert into ReservedRoom (id_reservedroom, room_id, reservation_id, check_in, check_out)
+values (4,20,4,'01-09-2022','09-09-2022');
+insert into ReservedRoom (id_reservedroom, room_id, reservation_id, check_in, check_out)
+values (5,6,5,'01-06-2022','09-06-2022');
+insert into ReservedRoom (id_reservedroom, room_id, reservation_id, check_in, check_out)
+values (6,12,6,'01-07-2022','09-07-2022');
+insert into ReservedRoom (id_reservedroom, room_id, reservation_id, check_in, check_out)
+values (7,20,7,'01-12-2022','09-12-2022');
+insert into ReservedRoom (id_reservedroom, room_id, reservation_id, check_in, check_out)
+values (8,14,8,'23-11-2022','25-11-2022');
+insert into ReservedRoom (id_reservedroom, room_id, reservation_id, check_in, check_out)
+values (9,2,9,'10-10-2022','11-10-2022');
+insert into ReservedRoom (id_reservedroom, room_id, reservation_id, check_in, check_out)
+values (10,7,10,'01-07-2023','09-07-2023');
+insert into ReservedRoom (id_reservedroom, room_id, reservation_id, check_in, check_out)
+values (11,15,11,'01-06-2023','09-06-2023');
+insert into ReservedRoom (id_reservedroom, room_id, reservation_id, check_in, check_out)
+values (12,19,12,'01-06-2023','09-06-2023');
+
+
+create or replace procedure ex6(roletype STAFF.role%type)
+as
+    type tab_index is table of Staff%rowtype index by pls_integer;
+    t tab_index;
+    type tab_nest is table of VARCHAR2(255);
+    tt tab_nest := tab_nest();
+
+    begin
+        select * bulk collect into t
+        from STAFF
+        where ROLE = roletype;
+
+        for i in t.first..t.last loop
+            tt.extend();
+            tt(i) := ('are numele de ' || t(i).FIRST_NAME || ' ' || t(i).LAST_NAME);
+            DBMS_OUTPUT.PUT_LINE(tt(i));
+        end loop;
+    end;
+
+begin
+    ex6('bodyguard');
+end;
+
+create or replace procedure ex7
+as
+    v_numar number(4);
+    v_role Staff.role%type;
+    cursor c is
+        select role, count(ID_STAFF)
+        from STAFF
+        group by role;
+
+    vrole Staff.role%type;
+    cursor cc (parameter NUMBER) is
+        select role
+        from staff
+        group by role
+        having count(ID_STAFF) > parameter;
+    begin
+        OPEN c;
+        LOOP
+        	FETCH c INTO v_role, v_numar;
+        	EXIT WHEN c%NOTFOUND;
+
+        	IF v_numar = 0 THEN
+        	    DBMS_OUTPUT.PUT_LINE('numarul de  ' || v_role || ' este 0');
+        	ELSIF v_numar = 1 THEN
+        	    DBMS_OUTPUT.PUT_LINE('numarul de ' || v_role || ' este de 1');
+        	ELSE
+        	    DBMS_OUTPUT.PUT_LINE('numarul de ' || v_role || ' este '|| v_numar);
+            END IF;
+        END LOOP;
+        CLOSE c;
+        open cc(2);
+        loop
+            fetch cc into vrole ;
+            exit when cc%notfound;
+
+            DBMS_OUTPUT.PUT_LINE(vrole || ' este un rol cu mai mult de 2 angajati');
+        end loop;
+    end;
+
+begin
+    ex7();
+end;
+
+create or replace function ex8(parameter date) return number
+is
+    bad_date exception;
+    no_data exception;
+    valreturn number;
+    begin
+        if (parameter < '01-01-2022') then
+            raise bad_date;
+        end if;
+
+        select count(ID_CLIENT)
+        into valreturn
+        from CLIENTS
+        join RESERVATIONS R on CLIENTS.ID_CLIENT = R.CLIENT_ID
+        join RESERVEDROOM R2 on R.ID_RESERVATION = R2.RESERVATION_ID
+        where CHECK_IN > parameter;
+
+        if (valreturn > 0) then return valreturn;
+        else raise no_data;
+        end if;
+    exception
+        when bad_date then
+            DBMS_OUTPUT.PUT_LINE('nu e buna data');
+            return -1;
+        when no_data then
+            DBMS_OUTPUT.PUT_LINE('nu avem date despre cautarea aceasta');
+            return -1;
+    end;
+
+select ex8('01-01-2021') from DUAL;
+select EX8('01-01-2024') from dual;
+select ex8('01-01-2022') from dual;
+
+
+create or replace procedure ex9
+as
+    no_data exception;
+    too_many_rows exception;
+    valfinal number;
+    begin
+        select count(ID_CLIENT)
+        into valfinal
+        from CLIENTS
+        join RESERVATIONS R on CLIENTS.ID_CLIENT = R.CLIENT_ID
+        join RESERVEDROOM R2 on R.ID_RESERVATION = R2.RESERVATION_ID
+        join ROOMS R3 on R3.ID_ROOM = R2.ROOM_ID
+        join RESORTS R4 on R4.ID_RESORT = R3.RESORT_ID
+        where CHECK_OUT < '01-01-2023' and (R4.NAME = 'Grand Hotel București' or R4.NAME = 'Hotel Trianon' or r4.NAME = 'Happy Accomodation');
+
+        if valfinal > 0 then
+            DBMS_OUTPUT.PUT_LINE('exista ' || valfinal || ' clienti care au facut check-out inainte de 1 ianuarie 2023 la Grand Hotel, Trianon sau Happy Accomodation');
+        else
+            raise no_data;
+        end if;
+
+        if valfinal > 5 then
+            raise too_many_rows;
+        end if;
+
+        exception
+            when no_data then
+                DBMS_OUTPUT.PUT_LINE('nu avem date despre cautarea aceasta');
+            when too_many_rows then
+                DBMS_OUTPUT.PUT_LINE('este peste capacitatea noastra de raspuns');
+    end;
+
+begin
+    ex9();
+end;
+
+create or replace trigger toomanyClients before insert on CLIENTS
+declare
+    totalClients number;
+    begin
+        select count(ID_CLIENT)
+        into totalClients
+        from CLIENTS;
+
+        if totalClients > 7 then
+            RAISE_APPLICATION_ERROR(-20500, 'not allowed to add any more values');
+        end if;
+    end;
+
+BEGIN
+ FOR i in 1 .. 11 LOOP
+    insert into CLIENTS values (5+i, 'Clientnume', 'clientnume',NULL);
+ END LOOP;
+END;
+
+create or replace trigger ex11 after insert on RESERVEDROOM for each row
+declare
+    begin
+        if (to_date(:NEW.CHECK_IN, 'dd-mm-yyyy') >= '01-01-3000') or (to_date(:NEW.CHECK_OUT, 'dd-mm-yyyy') <= '01-01-1900') then
+            RAISE_APPLICATION_ERROR(-20500, 'nu se mai pot adauga alte valori');
+        end if;
+    end;
+
+--valoare gresita
+insert into ReservedRoom (id_reservedroom, room_id, reservation_id, check_in, check_out)
+values (1000,12,5,'01-06-4000','09-06-2022');
+
+
+create or replace trigger ex12 after create or alter or drop on schema
+declare
+    begin
+        DBMS_OUTPUT.PUT_LINE('utilizatorul cu datele: ' || sys.LOGIN_USER() || ' a facut o modificare in baza de date la ora si data ' || systimestamp);
+    end;
+
+create table tableex12 (
+    id number
+);
+alter table tableex12 add nume varchar2(255);
+
+drop table tableex12;
+
